@@ -1,4 +1,4 @@
-﻿namespace XPerf.Controls
+﻿namespace XPerf.Utils
 {
     internal static class Remapper
     {

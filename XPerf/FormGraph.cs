@@ -24,7 +24,9 @@ namespace XPerf
 
         private void CreateGraphs()
         {
-            for (var i = 0; i < 20; i++)
+            splitContainer.Panel1.Controls.Add(graphPreviewPanel);
+
+            for (var i = 0; i < 10; i++)
             {
                 var c = new LineGraphListItem
                 {
@@ -32,13 +34,13 @@ namespace XPerf
                     Detail = $"Detail string {i}"
                 };
 
-                stackPanel1.Controls.Add(c);
+                graphPreviewPanel.Controls.Add(c);
             }
         }
 
         private void CollectData(object sender, EventArgs e)
         {
-            foreach (Control control in stackPanel1.Controls)
+            foreach (Control control in graphPreviewPanel.Controls)
             {
                 if (!(control is LineGraphListItem li))
                     continue;

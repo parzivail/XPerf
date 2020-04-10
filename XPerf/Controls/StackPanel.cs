@@ -23,55 +23,48 @@ namespace XPerf.Controls
             SuspendLayout();
             WrapContents = false;
             ResumeLayout(false);
-            
-            // Disable horizontal scrollbar
-            AutoScroll = false;
-            HorizontalScroll.Maximum = 0;
-            AutoScroll = true;
+
+            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public new bool WrapContents
+        protected override CreateParams CreateParams
         {
-            get => base.WrapContents;
-            set => base.WrapContents = value;
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000; // WS_CLIPCHILDREN
+                return cp;
+            }
         }
-
-        /// <summary>
-        /// Get or set a value that when is true forces the resizing of each control.
-        /// If this value is false then only control that have AutoSize == true will be resized to
-        /// fit the client size of this container.
-        /// </summary>
-        [DefaultValue(true)]
-        public bool ForceAutoresizeOfControls { get; set; } = true;
 
         /// <inheritdoc />
         protected override void OnScroll(ScrollEventArgs se)
         {
-            base.OnScroll(se);
             Invalidate();
+            base.OnScroll(se);
         }
 
-        protected override void OnSizeChanged(EventArgs e)
+        protected override void OnResize(EventArgs eventargs)
         {
-            base.OnSizeChanged(e);
-            
+            SuspendLayout();
+            base.OnResize(eventargs);
+
             switch (FlowDirection)
             {
                 case FlowDirection.BottomUp:
                 case FlowDirection.TopDown:
                     foreach (Control control in Controls)
-                        if (ForceAutoresizeOfControls || control.AutoSize)
-                            control.Width = ClientSize.Width - control.Margin.Left - control.Margin.Right;
+                        control.Width = ClientSize.Width - control.Margin.Size.Width;
                     break;
                 case FlowDirection.LeftToRight:
                 case FlowDirection.RightToLeft:
                     foreach (Control control in Controls)
-                        if (ForceAutoresizeOfControls || control.AutoSize)
-                            control.Height = ClientSize.Height - control.Margin.Top - control.Margin.Bottom;
+                        control.Height = ClientSize.Height - control.Margin.Size.Width;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+            ResumeLayout(true);
         }
     }
 }

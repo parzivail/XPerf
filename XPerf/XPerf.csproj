@@ -47,25 +47,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\LineGraphControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\LineGraphControl.Designer.cs">
-      <DependentUpon>LineGraphControl.cs</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\LineGraphListItem.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\LineGraphListItem.Designer.cs">
-      <DependentUpon>LineGraphListItem.cs</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\MinimalSplitContainer.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\MinimalSplitContainer.Designer.cs">
-      <DependentUpon>MinimalSplitContainer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PaintSuspender.cs" />
-    <Compile Include="Controls\Remapper.cs" />
+    <Compile Include="Drawing\PaintSuspender.cs" />
+    <Compile Include="Utils\Remapper.cs" />
     <Compile Include="Controls\StackPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -85,12 +76,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Controls\LineGraphListItem.resx">
-      <DependentUpon>LineGraphListItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MinimalSplitContainer.resx">
-      <DependentUpon>MinimalSplitContainer.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormGraph.resx">
       <DependentUpon>FormGraph.cs</DependentUpon>
     </EmbeddedResource>
@@ -103,5 +88,6 @@
       <Version>12.0.3</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

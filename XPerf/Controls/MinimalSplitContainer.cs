@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using XPerf.Drawing;
 
 namespace XPerf.Controls
 {
-    [Designer(typeof(Designer), typeof(IRootDesigner))]
-    public partial class MinimalSplitContainer : UserControl
+    public class MinimalSplitContainer : ContainerControl
     {
         private bool _dragging;
 
@@ -33,9 +27,41 @@ namespace XPerf.Controls
             }
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public Panel Panel1 { get; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public Panel Panel2 { get; }
+
+        [DefaultValue(20)] public int SplitterLinePadding { get; set; } = 20;
+
+        [DefaultValue(3)] public int SplitterWidth { get; set; } = 3;
+
         public MinimalSplitContainer()
         {
-            InitializeComponent();
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+
+            SuspendLayout();
+
+            Panel1 = new Panel
+            {
+                Cursor = Cursors.Default
+            };
+
+            Panel2 = new Panel
+            {
+                Cursor = Cursors.Default
+            };
+
+            Controls.Add(Panel2);
+            Controls.Add(Panel1);
+
+            Cursor = Cursors.SizeWE;
+            Name = "MinimalSplitContainer";
+            Size = new Size(500, 300);
+
+            UpdateContainerSizes();
+            ResumeLayout(false);
         }
 
         /// <inheritdoc />
@@ -74,19 +100,24 @@ namespace XPerf.Controls
             UpdateContainerSizes();
         }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            using (var fgPen = new Pen(ForeColor))
+                e.Graphics.DrawLine(fgPen, SplitterDistance, ClientRectangle.Top + SplitterLinePadding, SplitterDistance, ClientRectangle.Bottom - SplitterLinePadding);
+        }
+
         private void UpdateContainerSizes()
         {
             using (this.SuspendPainting())
             {
-                Panel1.Width = SplitterDistance - Panel1.Margin.Left - Panel1.Margin.Right;
+                Panel1.Location = new Point(0, 0);
+                Panel1.Size = new Size(SplitterDistance - SplitterWidth / 2, Height);
 
-                Panel2.Location = new Point(Panel1.Width + Panel1.Margin.Right + Panel2.Margin.Left, Panel2.Location.Y);
-                Panel2.Width = (Width - SplitterDistance) - Panel2.Margin.Left - Panel2.Margin.Right;
+                Panel2.Location = new Point(SplitterDistance + Panel2.Margin.Left, 0);
+                Panel2.Size = new Size(Width - SplitterDistance - SplitterWidth / 2, Height);
             }
-        }
-
-        public class Designer : ScrollableControlDesigner
-        {
         }
     }
 }

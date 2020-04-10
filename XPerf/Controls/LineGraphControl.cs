@@ -15,7 +15,7 @@ using XPerf.Drawing;
 
 namespace XPerf.Controls
 {
-    public partial class LineGraphControl : UserControl
+    public class LineGraphControl : Control
     {
         private readonly float[] _data;
         private readonly float[] _altData;
@@ -80,8 +80,6 @@ namespace XPerf.Controls
 
         public LineGraphControl()
         {
-            InitializeComponent();
-
             SetStyle(ControlStyles.AllPaintingInWmPaint| ControlStyles.OptimizedDoubleBuffer, true);
             ResizeRedraw = true;
 

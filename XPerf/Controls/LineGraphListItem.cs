@@ -14,7 +14,7 @@ using XPerf.Drawing;
 
 namespace XPerf.Controls
 {
-    public partial class LineGraphListItem : UserControl
+    public class LineGraphListItem : Control
     {
         private readonly float[] _data;
         private readonly float[] _altData;
@@ -98,10 +98,15 @@ namespace XPerf.Controls
 
         public LineGraphListItem()
         {
-            InitializeComponent();
-
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+
+            SuspendLayout();
+            Name = "LineGraphListItem";
+            Size = new Size(200, 50);
+
             ResizeRedraw = true;
+
+            ResumeLayout(false);
 
             _data = new float[NumDataPoints];
             _altData = new float[NumDataPoints];

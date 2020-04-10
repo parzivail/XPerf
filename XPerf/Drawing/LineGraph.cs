@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using XPerf.Controls;
+using XPerf.Utils;
 
 namespace XPerf.Drawing
 {
