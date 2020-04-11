@@ -2,8 +2,16 @@
 {
     public interface IPollableDataSource
     {
-        float Poll();
+        void Poll();
+
+        float GetValue();
 
         string Format(float value);
+
+        string GetUnitHeader();
+
+        string GetGraphHeader();
+
+        string GetGraphDetailHeader();
     }
 }

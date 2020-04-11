@@ -101,6 +101,25 @@ namespace XPerf.Controls
             Invalidate();
         }
 
+        public void SetData(float[] data)
+        {
+            if (data.Length != NumDataPoints)
+                throw new ArgumentOutOfRangeException(nameof(data));
+
+            for (var i = 0; i < data.Length; i++) _data[(_dataCursor + i) % data.Length] = data[i];
+
+            Invalidate();
+        }
+
+        public float[] GetData()
+        {
+            var data = new float[NumDataPoints];
+            
+            for (var i = 0; i < data.Length; i++) data[i] = _data[(_dataCursor + i) % data.Length];
+
+            return data;
+        }
+
         /// <inheritdoc />
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -130,13 +149,18 @@ namespace XPerf.Controls
             rect.Width--;
             rect.Height--;
 
+            rect.X += Padding.Left;
+            rect.Y += Padding.Top;
+            rect.Width -= Padding.Size.Width;
+            rect.Height -= Padding.Size.Height;
+
             var headerHeight = DrawHeaders ? 40 : 0;
             var subHeaderHeight = DrawSubHeaders ? 20 : 0;
 
             var graphRect = new Rectangle(rect.X, rect.Y + headerHeight + subHeaderHeight, rect.Width, rect.Height - headerHeight - subHeaderHeight - subHeaderHeight);
-            var headerRect = new Rectangle(0, 0, rect.Width, headerHeight);
-            var topSubHeaderRect = new Rectangle(0, headerHeight, rect.Width, subHeaderHeight);
-            var bottomSubHeaderRect = new Rectangle(0, rect.Height - subHeaderHeight, rect.Width, subHeaderHeight);
+            var headerRect = new Rectangle(rect.X, rect.Y, rect.Width, headerHeight);
+            var topSubHeaderRect = new Rectangle(rect.X, rect.Y + headerHeight, rect.Width, subHeaderHeight);
+            var bottomSubHeaderRect = new Rectangle(rect.X, rect.Y + rect.Height - subHeaderHeight, rect.Width, subHeaderHeight);
             
             GraphPainting.DrawLineGraph(g, graphRect, ForeColor, BackColor, _dataCursor, _data, _altData, minValue, maxValue, HorizontalGridLines, VerticalGridLines, ShowAlternateData, ScrollAxes);
 
@@ -144,30 +168,30 @@ namespace XPerf.Controls
             if (DrawHeaders)
             {
                 TextRenderer.DrawText(g, Text, Font, headerRect, HeaderColor,
-                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
 
                 TextRenderer.DrawText(g, Detail, DetailFont, headerRect, HeaderColor,
-                    TextFormatFlags.Right | TextFormatFlags.VerticalCenter);
+                    TextFormatFlags.Right | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
             }
 
             if (DrawSubHeaders)
             {
                 // Top sub headers
                 TextRenderer.DrawText(g, SubHeader, SubheaderFont, topSubHeaderRect, SubheaderColor,
-                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
 
                 TextRenderer.DrawText(g, $"{MetricNumeralExtensions.ToMetric(maxValue, true)}{BaseSiUnit}",
                     SubheaderFont, topSubHeaderRect, SubheaderColor,
-                    TextFormatFlags.Right | TextFormatFlags.VerticalCenter);
+                    TextFormatFlags.Right | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
 
                 // Bottom sub headers
                 var seconds = (UpdateFrequency.TotalSeconds * _data.Length).Seconds();
                 TextRenderer.DrawText(g, $"{seconds}", SubheaderFont, bottomSubHeaderRect, SubheaderColor,
-                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
 
                 TextRenderer.DrawText(g, $"{MetricNumeralExtensions.ToMetric(minValue, true)}{BaseSiUnit}",
                     SubheaderFont, bottomSubHeaderRect, SubheaderColor,
-                    TextFormatFlags.Right | TextFormatFlags.VerticalCenter);
+                    TextFormatFlags.Right | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
             }
         }
     }

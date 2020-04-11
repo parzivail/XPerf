@@ -23,16 +23,4 @@ namespace XPerf.Plugins
             return decoratedTypes.Where(instance => instance.Metadata != null).ToList();
         }
     }
-
-    public class PluginInstance<TP, TA>
-    {
-        public readonly TP Plugin;
-        public readonly TA Metadata;
-
-        public PluginInstance(TP plugin, TA metadata)
-        {
-            Plugin = plugin;
-            Metadata = metadata;
-        }
-    }
 }

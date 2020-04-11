@@ -12,21 +12,47 @@ namespace XPerf.DataSource.Random
     {
         private readonly System.Random _random;
 
+        private float _value;
+
         public RandomDataSource()
         {
             _random = new System.Random();
         }
 
         /// <inheritdoc />
-        public float Poll()
+        public void Poll()
         {
-            return (float) _random.NextDouble();
+            _value = (float) _random.NextDouble();
+        }
+
+        /// <inheritdoc />
+        public float GetValue()
+        {
+            return _value;
         }
 
         /// <inheritdoc />
         public string Format(float value)
         {
             return $"{value}";
+        }
+
+        /// <inheritdoc />
+        public string GetUnitHeader()
+        {
+            return "Float [0,1)";
+        }
+
+        /// <inheritdoc />
+        public string GetGraphHeader()
+        {
+            return "Random Floats";
+        }
+
+        /// <inheritdoc />
+        public string GetGraphDetailHeader()
+        {
+            return "Random 32-bit float values for debugging";
         }
     }
 }

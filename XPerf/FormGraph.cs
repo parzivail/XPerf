@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -34,8 +35,8 @@ namespace XPerf
             {
                 var c = new LineGraphListItem
                 {
-                    Text = source.Metadata.Name, 
-                    Detail = source.Metadata.Description, 
+                    Text = source.Metadata.Name,
+                    Detail = source.Metadata.Description,
                     Tag = source
                 };
 
@@ -45,10 +46,35 @@ namespace XPerf
                 if (source.Metadata.Max.HasValue)
                     c.MaxValue = source.Metadata.Max.Value;
 
-                c.Selected += (sender, args) => Console.WriteLine(((LineGraphListItem) sender).Text);
+                c.Selected += (sender, args) => ChangeCenterGraph((LineGraphListItem)sender);
 
                 graphPreviewPanel.Controls.Add(c);
             }
+        }
+
+        private void ChangeCenterGraph(LineGraphListItem sender)
+        {
+            var source = (PluginInstance<IPollableDataSource, PerfDataSourceAttribute>)sender.Tag;
+
+            var c = new LineGraph
+            {
+                Text = source.Plugin.GetGraphHeader(),
+                Detail = source.Plugin.GetGraphDetailHeader(),
+                SubHeader = source.Plugin.GetUnitHeader(),
+                Dock = DockStyle.Fill,
+                Padding = new Padding(20)
+            };
+
+            if (source.Metadata.Min.HasValue)
+                c.MinValue = source.Metadata.Min.Value;
+
+            if (source.Metadata.Max.HasValue)
+                c.MaxValue = source.Metadata.Max.Value;
+
+            c.SetData(sender.GetData());
+
+            splitContainer.Panel2.Controls.Clear();
+            splitContainer.Panel2.Controls.Add(c);
         }
 
         private void CollectData(object sender, EventArgs e)
@@ -57,17 +83,13 @@ namespace XPerf
             {
                 if (!(control is LineGraphListItem li))
                     continue;
-                
-                Poll(li);
+
+                var instance = (PluginInstance<IPollableDataSource, PerfDataSourceAttribute>)li.Tag;
+                instance.Plugin.Poll();
+
+                li.AddDataPoint(instance.Plugin.GetValue());
+                if (li.IsSelected) ((LineGraph)splitContainer.Panel2.Controls[0]).SetData(li.GetData());
             }
-        }
-
-        private void Poll(LineGraphListItem graph)
-        {
-            if (!(graph.Tag is PluginInstance<IPollableDataSource, PerfDataSourceAttribute> instance))
-                return;
-
-            graph.AddDataPoint(instance.Plugin.Poll());
         }
 
         private void bExit_Click(object sender, EventArgs e)

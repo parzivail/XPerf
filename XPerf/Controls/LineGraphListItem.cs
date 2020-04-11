@@ -38,12 +38,13 @@ namespace XPerf.Controls
             get => _isSelected;
             set
             {
-                if (value)
+                if (value && !_isSelected)
                 {
                     DeselectOthers();
+                    _isSelected = true;
                     Selected?.Invoke(this, EventArgs.Empty);
                 }
-
+                
                 _isSelected = value;
                 Invalidate();
             }
@@ -149,6 +150,25 @@ namespace XPerf.Controls
             _dataCursor = (_dataCursor + 1) % _data.Length;
 
             Invalidate();
+        }
+
+        public void SetData(float[] data)
+        {
+            if (data.Length != NumDataPoints)
+                throw new ArgumentOutOfRangeException(nameof(data));
+
+            for (var i = 0; i < data.Length; i++) _data[(_dataCursor + i) % data.Length] = data[i];
+
+            Invalidate();
+        }
+
+        public float[] GetData()
+        {
+            var data = new float[NumDataPoints];
+            
+            for (var i = 0; i < data.Length; i++) data[i] = _data[(_dataCursor + i) % data.Length];
+
+            return data;
         }
 
         /// <inheritdoc />
