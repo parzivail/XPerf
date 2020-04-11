@@ -7,52 +7,23 @@ using XPerf.Api;
 
 namespace XPerf.DataSource.Random
 {
-    [PerfDataSource("Random", "Provides random data for debugging", 0, 0, 1)]
-    public class RandomDataSource : IPollableDataSource
+    [XPerfPlugin("Random", "Provides random data for debugging")]
+    public class RandomDataSource : XPerfDataProvider
     {
         private readonly System.Random _random;
-
-        private float _value;
 
         public RandomDataSource()
         {
             _random = new System.Random();
+
+            UnitHeader = "Float [0,1)";
+            GraphHeader = "Random Floats";
+            GraphDetailHeader = "Random 32-bit float values for debugging";
         }
 
-        /// <inheritdoc />
-        public void Poll()
+        public override float CollectData()
         {
-            _value = (float) _random.NextDouble();
-        }
-
-        /// <inheritdoc />
-        public float GetValue()
-        {
-            return _value;
-        }
-
-        /// <inheritdoc />
-        public string Format(float value)
-        {
-            return $"{value}";
-        }
-
-        /// <inheritdoc />
-        public string GetUnitHeader()
-        {
-            return "Float [0,1)";
-        }
-
-        /// <inheritdoc />
-        public string GetGraphHeader()
-        {
-            return "Random Floats";
-        }
-
-        /// <inheritdoc />
-        public string GetGraphDetailHeader()
-        {
-            return "Random 32-bit float values for debugging";
+            return (float)_random.NextDouble();
         }
     }
 }

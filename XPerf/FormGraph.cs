@@ -29,7 +29,7 @@ namespace XPerf
         {
             splitContainer.Panel1.Controls.Add(graphPreviewPanel);
 
-            var sources = PluginProvider.LoadPlugins<IPollableDataSource, PerfDataSourceAttribute>("DataSources");
+            var sources = PluginProvider.LoadPlugins<XPerfDataProvider, XPerfPluginAttribute>("DataSources");
 
             foreach (var source in sources)
             {
@@ -40,11 +40,14 @@ namespace XPerf
                     Tag = source
                 };
 
-                if (source.Metadata.Min.HasValue)
-                    c.MinValue = source.Metadata.Min.Value;
+                var min = source.Plugin.GetMin();
+                var max = source.Plugin.GetMax();
 
-                if (source.Metadata.Max.HasValue)
-                    c.MaxValue = source.Metadata.Max.Value;
+                if (min.HasValue)
+                    c.MinValue = min.Value;
+
+                if (max.HasValue)
+                    c.MaxValue = max.Value;
 
                 c.Selected += (sender, args) => ChangeCenterGraph((LineGraphListItem)sender);
 
@@ -54,22 +57,25 @@ namespace XPerf
 
         private void ChangeCenterGraph(LineGraphListItem sender)
         {
-            var source = (PluginInstance<IPollableDataSource, PerfDataSourceAttribute>)sender.Tag;
+            var source = (PluginInstance<XPerfDataProvider, XPerfPluginAttribute>)sender.Tag;
 
             var c = new LineGraph
             {
-                Text = source.Plugin.GetGraphHeader(),
-                Detail = source.Plugin.GetGraphDetailHeader(),
-                SubHeader = source.Plugin.GetUnitHeader(),
+                Text = source.Plugin.GraphHeader,
+                Detail = source.Plugin.GraphDetailHeader,
+                SubHeader = source.Plugin.UnitHeader,
                 Dock = DockStyle.Fill,
                 Padding = new Padding(20)
             };
 
-            if (source.Metadata.Min.HasValue)
-                c.MinValue = source.Metadata.Min.Value;
+            var min = source.Plugin.GetMin();
+            var max = source.Plugin.GetMax();
 
-            if (source.Metadata.Max.HasValue)
-                c.MaxValue = source.Metadata.Max.Value;
+            if (min.HasValue)
+                c.MinValue = min.Value;
+
+            if (max.HasValue)
+                c.MaxValue = max.Value;
 
             c.SetData(sender.GetData());
 
@@ -84,7 +90,7 @@ namespace XPerf
                 if (!(control is LineGraphListItem li))
                     continue;
 
-                var instance = (PluginInstance<IPollableDataSource, PerfDataSourceAttribute>)li.Tag;
+                var instance = (PluginInstance<XPerfDataProvider, XPerfPluginAttribute>)li.Tag;
                 instance.Plugin.Poll();
 
                 li.AddDataPoint(instance.Plugin.GetValue());

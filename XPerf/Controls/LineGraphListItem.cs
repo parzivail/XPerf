@@ -28,8 +28,6 @@ namespace XPerf.Controls
 
         [DefaultValue(true)] public bool ScrollAxes { get; set; } = true;
 
-        [DefaultValue(false)] public bool AutoSizeAxes { get; set; } = false;
-
         [DefaultValue(true)] public bool DrawHeaders { get; set; } = true;
 
         [DefaultValue(false)]
@@ -50,9 +48,9 @@ namespace XPerf.Controls
             }
         }
 
-        [DefaultValue(0)] public float MinValue { get; set; } = 0;
+        [DefaultValue(0)] public float? MinValue { get; set; } = 0;
 
-        [DefaultValue(1)] public float MaxValue { get; set; } = 1;
+        [DefaultValue(1)] public float? MaxValue { get; set; } = 1;
 
         [DefaultValue(0)] public int HorizontalGridLines { get; set; } = 0;
 
@@ -220,19 +218,13 @@ namespace XPerf.Controls
 
         private void DrawGraph(Graphics g, Rectangle rect)
         {
-            var minValue = MinValue;
-            var maxValue = MaxValue;
+            var minValue = MinValue ?? _data.Min();
+            var maxValue = MaxValue ?? _data.Max();
 
-            if (AutoSizeAxes)
+            if (maxValue == minValue)
             {
-                minValue = _data.Min();
-                maxValue = _data.Max();
-
-                if (maxValue == minValue)
-                {
-                    maxValue++;
-                    minValue--;
-                }
+                maxValue++;
+                minValue--;
             }
 
             rect.Width--;

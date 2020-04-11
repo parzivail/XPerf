@@ -41,9 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPollableDataSource.cs" />
-    <Compile Include="PerfDataSourceAttribute.cs" />
+    <Compile Include="XPerfDataProvider.cs" />
+    <Compile Include="XPerfPluginAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XPerfSourceProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

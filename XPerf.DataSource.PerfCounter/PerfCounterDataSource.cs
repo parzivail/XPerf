@@ -9,63 +9,31 @@ using XPerf.Api;
 
 namespace XPerf.DataSource.PerfCounter
 {
-    [PerfDataSource("CPU Usage", "Tracks processor utilization", 0, 0, 100)]
-    public class PerfCounterDataSource : IPollableDataSource
+    [XPerfPlugin("CPU Usage", "Tracks processor utilization")]
+    public class PerfCounterDataSource : XPerfDataProvider
     {
         private readonly PerformanceCounter _perfCounter;
-        private readonly string _cpuInfo;
-        private float _value;
 
         public PerfCounterDataSource()
         {
             _perfCounter = new PerformanceCounter("Processor Information", "% Processor Time", "_Total");
 
             using (var win32Proc = new ManagementObjectSearcher("select * from Win32_Processor"))
-            {
                 foreach (var o in win32Proc.Get())
-                {
-                    var obj = (ManagementObject) o;
-                    var procName = obj["Name"].ToString();
+                    GraphDetailHeader = o["Name"].ToString();
 
-                   _cpuInfo = procName;
-                }
-            }
+            GraphHeader = "CPU";
+            UnitHeader = "% Utilization";
         }
 
-        /// <inheritdoc />
-        public void Poll()
+        public override float CollectData()
         {
-            _value = _perfCounter.NextValue();
+            return _perfCounter.NextValue();
         }
 
-        /// <inheritdoc />
-        public float GetValue()
-        {
-            return _value;
-        }
-
-        /// <inheritdoc />
-        public string Format(float value)
+        public override string Format(float value)
         {
             return $"{value}%";
-        }
-
-        /// <inheritdoc />
-        public string GetUnitHeader()
-        {
-            return "% Utilization";
-        }
-
-        /// <inheritdoc />
-        public string GetGraphHeader()
-        {
-            return "CPU";
-        }
-
-        /// <inheritdoc />
-        public string GetGraphDetailHeader()
-        {
-            return _cpuInfo;
         }
     }
 }

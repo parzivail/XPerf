@@ -10,6 +10,13 @@ namespace XPerf.Plugins
 {
     public static class PluginProvider
     {
+        /// <summary>
+        /// Load plugin types with a given required metadata attribute
+        /// </summary>
+        /// <typeparam name="TP">The plugin base type</typeparam>
+        /// <typeparam name="TM">The metadata decoration type</typeparam>
+        /// <param name="pluginDirectory">The directory in which to search for plugins</param>
+        /// <returns>A list of instantiated plugin types and metadata tags</returns>
         public static List<PluginInstance<TP, TM>> LoadPlugins<TP, TM>(string pluginDirectory) where TM : Attribute
         {
             var directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pluginDirectory);
