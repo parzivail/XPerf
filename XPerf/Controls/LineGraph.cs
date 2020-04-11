@@ -15,7 +15,7 @@ using XPerf.Drawing;
 
 namespace XPerf.Controls
 {
-    public class LineGraphControl : Control
+    public class LineGraph : Control
     {
         private readonly float[] _data;
         private readonly float[] _altData;
@@ -78,7 +78,7 @@ namespace XPerf.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public override string Text { get; set; }
 
-        public LineGraphControl()
+        public LineGraph()
         {
             SetStyle(ControlStyles.AllPaintingInWmPaint| ControlStyles.OptimizedDoubleBuffer, true);
             ResizeRedraw = true;
@@ -89,8 +89,7 @@ namespace XPerf.Controls
 
         public void AddDataPoint(float point)
         {
-            _data[_dataCursor] = point;
-            _dataCursor = (_dataCursor + 1) % _data.Length;
+            AddDataPoint(point, 0);
         }
 
         public void AddDataPoint(float point, float altPoint)
@@ -98,6 +97,8 @@ namespace XPerf.Controls
             _data[_dataCursor] = point;
             _altData[_dataCursor] = altPoint;
             _dataCursor = (_dataCursor + 1) % _data.Length;
+
+            Invalidate();
         }
 
         /// <inheritdoc />
@@ -137,7 +138,7 @@ namespace XPerf.Controls
             var topSubHeaderRect = new Rectangle(0, headerHeight, rect.Width, subHeaderHeight);
             var bottomSubHeaderRect = new Rectangle(0, rect.Height - subHeaderHeight, rect.Width, subHeaderHeight);
             
-            LineGraph.DrawGraph(g, graphRect, ForeColor, BackColor, _dataCursor, _data, _altData, minValue, maxValue, HorizontalGridLines, VerticalGridLines, ShowAlternateData, ScrollAxes);
+            GraphPainting.DrawLineGraph(g, graphRect, ForeColor, BackColor, _dataCursor, _data, _altData, minValue, maxValue, HorizontalGridLines, VerticalGridLines, ShowAlternateData, ScrollAxes);
 
             // Draw headers
             if (DrawHeaders)

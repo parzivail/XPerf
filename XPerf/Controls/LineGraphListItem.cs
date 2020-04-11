@@ -22,7 +22,7 @@ namespace XPerf.Controls
         private int _dataCursor;
 
         private bool _hover = false;
-        private bool _selected = false;
+        private bool _isSelected = false;
 
         [DefaultValue(false)] public bool ShowAlternateData { get; set; } = false;
 
@@ -33,15 +33,18 @@ namespace XPerf.Controls
         [DefaultValue(true)] public bool DrawHeaders { get; set; } = true;
 
         [DefaultValue(false)]
-        public bool Selected
+        public bool IsSelected
         {
-            get => _selected;
+            get => _isSelected;
             set
             {
                 if (value)
+                {
                     DeselectOthers();
+                    Selected?.Invoke(this, EventArgs.Empty);
+                }
 
-                _selected = value;
+                _isSelected = value;
                 Invalidate();
             }
         }
@@ -90,11 +93,19 @@ namespace XPerf.Controls
         [DefaultValue("3, 0, 3, 0")]
         protected override Padding DefaultMargin { get; } = new Padding(3, 0, 3, 0);
 
+        [DefaultValue("5, 5, 5, 5")]
+        protected override Padding DefaultPadding { get; } = new Padding(5, 5, 5, 5);
+
+        [DefaultValue("200, 60")]
+        protected override Size DefaultSize { get; } = new Size(200, 60);
+
         [Bindable(true)]
         [EditorBrowsable(EditorBrowsableState.Always)]
         [Browsable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public override string Text { get; set; }
+
+        public event EventHandler<EventArgs> Selected;
 
         public LineGraphListItem()
         {
@@ -102,7 +113,6 @@ namespace XPerf.Controls
 
             SuspendLayout();
             Name = "LineGraphListItem";
-            Size = new Size(200, 50);
 
             ResizeRedraw = true;
 
@@ -123,7 +133,7 @@ namespace XPerf.Controls
                 if (!(sibling is LineGraphListItem li))
                     continue;
 
-                li.Selected = false;
+                li.IsSelected = false;
             }
         }
 
@@ -167,18 +177,18 @@ namespace XPerf.Controls
         }
 
         /// <inheritdoc />
-        protected override void OnGotFocus(EventArgs e)
+        protected override void OnClick(EventArgs e)
         {
-            base.OnGotFocus(e);
-            Invalidate();
+            base.OnClick(e);
+            Focus();
         }
 
         /// <inheritdoc />
-        protected override void OnMouseClick(MouseEventArgs e)
+        protected override void OnGotFocus(EventArgs e)
         {
-            base.OnMouseClick(e);
-
-            Selected = true;
+            base.OnGotFocus(e);
+            IsSelected = true;
+            Invalidate();
         }
 
         /// <inheritdoc />
@@ -208,37 +218,44 @@ namespace XPerf.Controls
             rect.Width--;
             rect.Height--;
 
+            var clientRect = rect;
+
+            rect.X += Padding.Left;
+            rect.Y += Padding.Top;
+            rect.Width -= Padding.Size.Width;
+            rect.Height -= Padding.Size.Height;
+
             var headerHeight = Font.Height;
 
             var graphRect = new Rectangle(rect.X + GraphPadding, rect.Y + GraphPadding, GraphWidth, rect.Height - 2 * GraphPadding);
-            var headerRect = new Rectangle(rect.X + GraphWidth + 2 * GraphPadding, rect.Y, rect.Width - GraphWidth - 2 * GraphPadding, headerHeight);
-            var detailRect = new Rectangle(rect.X + GraphWidth + 2 * GraphPadding, headerHeight, rect.Width - GraphWidth - 2 * GraphPadding, rect.Height - headerHeight);
+            var headerRect = new Rectangle(rect.X + GraphWidth + 3 * GraphPadding - 1, rect.Y, rect.Width - GraphWidth - 2 * GraphPadding, headerHeight);
+            var detailRect = new Rectangle(rect.X + GraphWidth + 3 * GraphPadding, headerHeight, rect.Width - GraphWidth - 2 * GraphPadding, rect.Height - headerHeight);
 
             if (Focused)
             {
                 using (var b = new SolidBrush(Color.FromArgb(50, FocusColor.R, FocusColor.G, FocusColor.B)))
-                    g.FillRectangle(b, rect);
+                    g.FillRectangle(b, clientRect);
             }
-            else if (Selected)
+            else if (IsSelected)
             {
                 using (var b = new SolidBrush(Color.FromArgb(38, SelectedColor.R, SelectedColor.G, SelectedColor.B)))
-                    g.FillRectangle(b, rect);
+                    g.FillRectangle(b, clientRect);
             }
             else if (_hover)
             {
                 using (var b = new SolidBrush(Color.FromArgb(38, FocusColor.R, FocusColor.G, FocusColor.B)))
-                    g.FillRectangle(b, rect);
+                    g.FillRectangle(b, clientRect);
                 using (var p = new Pen(Color.FromArgb(50, FocusColor.R, FocusColor.G, FocusColor.B)))
-                    g.DrawRectangle(p, rect.X, rect.Y, rect.Width - 1, rect.Height - 1);
+                    g.DrawRectangle(p, clientRect.X, clientRect.Y, clientRect.Width - 1, clientRect.Height - 1);
             }
 
-            LineGraph.DrawGraph(g, graphRect, ForeColor, BackColor, _dataCursor, _data, _altData, minValue, maxValue, HorizontalGridLines, VerticalGridLines, ShowAlternateData, ScrollAxes);
+            GraphPainting.DrawLineGraph(g, graphRect, ForeColor, BackColor, _dataCursor, _data, _altData, minValue, maxValue, HorizontalGridLines, VerticalGridLines, ShowAlternateData, ScrollAxes);
 
             // Draw headers
             if (DrawHeaders)
             {
-                TextRenderer.DrawText(g, Text, Font, headerRect, HeaderColor, TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
-                TextRenderer.DrawText(g, Detail, DetailFont, detailRect, HeaderColor, TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
+                TextRenderer.DrawText(g, Text, Font, headerRect, HeaderColor, TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
+                TextRenderer.DrawText(g, Detail, DetailFont, detailRect, HeaderColor, TextFormatFlags.Left | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPadding);
             }
         }
     }

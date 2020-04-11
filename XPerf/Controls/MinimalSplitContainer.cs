@@ -33,7 +33,7 @@ namespace XPerf.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public Panel Panel2 { get; }
 
-        [DefaultValue(20)] public int SplitterLinePadding { get; set; } = 20;
+        [DefaultValue(10)] public int SplitterLinePadding { get; set; } = 10;
 
         [DefaultValue(3)] public int SplitterWidth { get; set; } = 3;
 

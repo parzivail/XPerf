@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using XPerf.Api;
 using XPerf.Controls;
+using XPerf.Plugins;
 
 namespace XPerf
 {
@@ -26,13 +28,24 @@ namespace XPerf
         {
             splitContainer.Panel1.Controls.Add(graphPreviewPanel);
 
-            for (var i = 0; i < 10; i++)
+            var sources = PluginProvider.LoadPlugins<IPollableDataSource, PerfDataSourceAttribute>("DataSources");
+
+            foreach (var source in sources)
             {
                 var c = new LineGraphListItem
                 {
-                    Text = $"Line Graph {i}",
-                    Detail = $"Detail string {i}"
+                    Text = source.Metadata.Name, 
+                    Detail = source.Metadata.Description, 
+                    Tag = source
                 };
+
+                if (source.Metadata.Min.HasValue)
+                    c.MinValue = source.Metadata.Min.Value;
+
+                if (source.Metadata.Max.HasValue)
+                    c.MaxValue = source.Metadata.Max.Value;
+
+                c.Selected += (sender, args) => Console.WriteLine(((LineGraphListItem) sender).Text);
 
                 graphPreviewPanel.Controls.Add(c);
             }
@@ -45,14 +58,21 @@ namespace XPerf
                 if (!(control is LineGraphListItem li))
                     continue;
                 
-                AddRandomData(li);
+                Poll(li);
             }
         }
 
-        private void AddRandomData(LineGraphListItem graph)
+        private void Poll(LineGraphListItem graph)
         {
-            var height = (graph.MaxValue - graph.MinValue);
-            graph.AddDataPoint((float)(_random.NextDouble() * height) + graph.MinValue, (float)(_random.NextDouble() * height) + graph.MinValue);
+            if (!(graph.Tag is PluginInstance<IPollableDataSource, PerfDataSourceAttribute> instance))
+                return;
+
+            graph.AddDataPoint(instance.Plugin.Poll());
+        }
+
+        private void bExit_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

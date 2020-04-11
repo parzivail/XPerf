@@ -4,6 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPerf", "XPerf\XPerf.csproj", "{A674F0E2-5B87-487C-B8C8-967ACC195117}"
+	ProjectSection(ProjectDependencies) = postProject
+		{50A4A440-8130-4CEF-87D7-A89E56E4F259} = {50A4A440-8130-4CEF-87D7-A89E56E4F259}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPerfApi", "XPerfApi\XPerfApi.csproj", "{BE832B9E-C77C-482B-AFE1-CF7FC603355E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPerf.DataSource.Random", "XPerf.DataSource.Random\XPerf.DataSource.Random.csproj", "{50A4A440-8130-4CEF-87D7-A89E56E4F259}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +22,14 @@ Global
 		{A674F0E2-5B87-487C-B8C8-967ACC195117}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A674F0E2-5B87-487C-B8C8-967ACC195117}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A674F0E2-5B87-487C-B8C8-967ACC195117}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE832B9E-C77C-482B-AFE1-CF7FC603355E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE832B9E-C77C-482B-AFE1-CF7FC603355E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE832B9E-C77C-482B-AFE1-CF7FC603355E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE832B9E-C77C-482B-AFE1-CF7FC603355E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50A4A440-8130-4CEF-87D7-A89E56E4F259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50A4A440-8130-4CEF-87D7-A89E56E4F259}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50A4A440-8130-4CEF-87D7-A89E56E4F259}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50A4A440-8130-4CEF-87D7-A89E56E4F259}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

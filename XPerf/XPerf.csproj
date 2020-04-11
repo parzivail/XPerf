@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\LineGraphControl.cs">
+    <Compile Include="Controls\LineGraph.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\LineGraphListItem.cs">
@@ -56,11 +56,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Drawing\PaintSuspender.cs" />
+    <Compile Include="Plugins\PluginProvider.cs" />
     <Compile Include="Utils\Remapper.cs" />
     <Compile Include="Controls\StackPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Drawing\LineGraph.cs" />
+    <Compile Include="Drawing\GraphPainting.cs" />
     <Compile Include="FormGraph.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,6 +89,11 @@
       <Version>12.0.3</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\XPerfApi\XPerfApi.csproj">
+      <Project>{be832b9e-c77c-482b-afe1-cf7fc603355e}</Project>
+      <Name>XPerfApi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,9 +10,9 @@ using XPerf.Utils;
 
 namespace XPerf.Drawing
 {
-    class LineGraph
+    class GraphPainting
     {
-        public static void DrawGraph(Graphics g, Rectangle graphRect, Color foreColor, Color backColor, int dataCursor, float[] data,
+        public static void DrawLineGraph(Graphics g, Rectangle graphRect, Color foreColor, Color backColor, int dataCursor, float[] data,
             float[] altData, float minValue, float maxValue, int horizontalGridLines, int verticalGridLines,
             bool showAlternateData, bool scrollAxes)
         {
