@@ -22,54 +22,62 @@ namespace XPerf
         {
             InitializeComponent();
 
-            CreateGraphs();
+            splitContainer.Panel1.Controls.Add(graphPreviewPanel);
+            var plugins = PluginProvider.LoadPlugins<XPerfSourceProvider, XPerfPluginAttribute>("DataSources");
+
+            foreach (var pluginInstance in plugins)
+            {
+                var tsmi = new ToolStripMenuItem(pluginInstance.Metadata.Name);
+                tsmi.Click += (sender, args) =>
+                {
+                    var source = pluginInstance.Plugin.CreateDataProvider();
+                    if (source == null)
+                        return;
+
+                    CreateGraph(source);
+                };
+                bAddSource.DropDownItems.Add(tsmi);
+            }
         }
 
-        private void CreateGraphs()
+        private void CreateGraph(XPerfDataProvider source)
         {
-            splitContainer.Panel1.Controls.Add(graphPreviewPanel);
-
-            var sources = PluginProvider.LoadPlugins<XPerfDataProvider, XPerfPluginAttribute>("DataSources");
-
-            foreach (var source in sources)
+            var c = new LineGraphListItem
             {
-                var c = new LineGraphListItem
-                {
-                    Text = source.Metadata.Name,
-                    Detail = source.Metadata.Description,
-                    Tag = source
-                };
+                Text = source.GraphHeader,
+                Detail = source.UnitHeader,
+                Tag = source
+            };
 
-                var min = source.Plugin.GetMin();
-                var max = source.Plugin.GetMax();
+            var min = source.GetMin();
+            var max = source.GetMax();
 
-                if (min.HasValue)
-                    c.MinValue = min.Value;
+            if (min.HasValue)
+                c.MinValue = min.Value;
 
-                if (max.HasValue)
-                    c.MaxValue = max.Value;
+            if (max.HasValue)
+                c.MaxValue = max.Value;
 
-                c.Selected += (sender, args) => ChangeCenterGraph((LineGraphListItem)sender);
+            c.Selected += (sender, args) => ChangeCenterGraph((LineGraphListItem)sender);
 
-                graphPreviewPanel.Controls.Add(c);
-            }
+            graphPreviewPanel.Controls.Add(c);
         }
 
         private void ChangeCenterGraph(LineGraphListItem sender)
         {
-            var source = (PluginInstance<XPerfDataProvider, XPerfPluginAttribute>)sender.Tag;
+            var source = (XPerfDataProvider)sender.Tag;
 
             var c = new LineGraph
             {
-                Text = source.Plugin.GraphHeader,
-                Detail = source.Plugin.GraphDetailHeader,
-                SubHeader = source.Plugin.UnitHeader,
+                Text = source.GraphHeader,
+                Detail = source.GraphDetailHeader,
+                SubHeader = source.UnitHeader,
                 Dock = DockStyle.Fill,
                 Padding = new Padding(20)
             };
 
-            var min = source.Plugin.GetMin();
-            var max = source.Plugin.GetMax();
+            var min = source.GetMin();
+            var max = source.GetMax();
 
             if (min.HasValue)
                 c.MinValue = min.Value;
@@ -90,10 +98,10 @@ namespace XPerf
                 if (!(control is LineGraphListItem li))
                     continue;
 
-                var instance = (PluginInstance<XPerfDataProvider, XPerfPluginAttribute>)li.Tag;
-                instance.Plugin.Poll();
+                var instance = (XPerfDataProvider)li.Tag;
+                instance.Poll();
 
-                li.AddDataPoint(instance.Plugin.GetValue());
+                li.AddDataPoint(instance.GetValue());
                 if (li.IsSelected) ((LineGraph)splitContainer.Panel2.Controls[0]).SetData(li.GetData());
             }
         }

@@ -30,13 +30,16 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ToolStrip toolStrip;
-            System.Windows.Forms.ToolStripDropDownButton bFile;
-            this.bExit = new System.Windows.Forms.ToolStripMenuItem();
+            System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+            System.Windows.Forms.ToolStripDropDownButton bData;
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.bAddSource = new System.Windows.Forms.ToolStripMenuItem();
             this._dataCollectTimer = new System.Windows.Forms.Timer(this.components);
             this.splitContainer = new XPerf.Controls.MinimalSplitContainer();
             this.graphPreviewPanel = new XPerf.Controls.StackPanel();
             toolStrip = new System.Windows.Forms.ToolStrip();
-            bFile = new System.Windows.Forms.ToolStripDropDownButton();
+            toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            bData = new System.Windows.Forms.ToolStripDropDownButton();
             toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,27 +48,42 @@
             toolStrip.BackColor = System.Drawing.Color.White;
             toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            bFile});
+            toolStripDropDownButton1,
+            bData});
             toolStrip.Location = new System.Drawing.Point(0, 0);
             toolStrip.Name = "toolStrip";
             toolStrip.Size = new System.Drawing.Size(859, 25);
             toolStrip.TabIndex = 2;
             // 
-            // bFile
+            // toolStripDropDownButton1
             // 
-            bFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.bExit});
-            bFile.Name = "bFile";
-            bFile.ShowDropDownArrow = false;
-            bFile.Size = new System.Drawing.Size(29, 22);
-            bFile.Text = "&File";
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1});
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.ShowDropDownArrow = false;
+            toolStripDropDownButton1.Size = new System.Drawing.Size(29, 22);
+            toolStripDropDownButton1.Text = "&File";
             // 
-            // bExit
+            // toolStripMenuItem1
             // 
-            this.bExit.Name = "bExit";
-            this.bExit.Size = new System.Drawing.Size(180, 22);
-            this.bExit.Text = "&Exit";
-            this.bExit.Click += new System.EventHandler(this.bExit_Click);
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(93, 22);
+            this.toolStripMenuItem1.Text = "&Exit";
+            // 
+            // bData
+            // 
+            bData.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bAddSource});
+            bData.Name = "bData";
+            bData.ShowDropDownArrow = false;
+            bData.Size = new System.Drawing.Size(35, 22);
+            bData.Text = "&Data";
+            // 
+            // bAddSource
+            // 
+            this.bAddSource.Name = "bAddSource";
+            this.bAddSource.Size = new System.Drawing.Size(180, 22);
+            this.bAddSource.Text = "&Add Source";
             // 
             // _dataCollectTimer
             // 
@@ -132,6 +150,7 @@
         private System.Windows.Forms.Timer _dataCollectTimer;
         private Controls.StackPanel graphPreviewPanel;
         private XPerf.Controls.MinimalSplitContainer splitContainer;
-        private System.Windows.Forms.ToolStripMenuItem bExit;
+        private System.Windows.Forms.ToolStripMenuItem bAddSource;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
